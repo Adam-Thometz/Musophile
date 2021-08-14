@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}{{user.username}}'s Library{% endblock %}
+{% block content %}
+<h1>{{user.username}}'s Library</h1>
+<div class="library">
+    {% if not user.library %}
+    <strong>There are no recordings in this library yet...</strong>
+    {% else %}
+    {% for recording in user.library %}
+    <div class="library-recording-info">
+        <h4>{{recording.title}}</h4>
+        <ul>
+            <li>Artist: {{recording.artist}}</li>
+            <li>Release: {{recording.release}}</li>
+            <li>Duration in seconds: {{recording.duration}}</li>
+            <li>Tags:
+                {% if not recording.tags %}
+                <b>None</b>
+                {% else %}
+                <ul>
+                    {% for tag in recording.tags %}
+                    <li><a href="/tags/{{tag.id}}">{{tag.name}}</a>
+                    {% if user.id == g.user.id %}
+                    <form action="/tags/{{tag.id}}/remove/{{recording.id}}" method="POST">
+                        <button>X</button>
+                    </form>
+                    {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </li>
+            {% if recording.spotify_uri %}
+            <iframe src="https://open.spotify.com/embed/track/{{recording.spotify_uri}}" width="100%" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+            {% endif %}
+            <li>Playlists in:
+                {% if not recording.playlists %}
+                <b>None</b>
+                {% else %}
+                <ul>
+                    {% for playlist in recording.playlists %}
+                    <li><a href="/playlists/{{playlist.id}}">{{playlist.name}}</a></li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </li>
+            <li>Comments: {{recording.comments}}</li>
+        </ul>
+        {% if user.id == g.user.id %}
+        <a href="/user/{{user.id}}/library/{{recording.id}}/edit">Edit recording</a>
+        <form action="/user/{{user.id}}/library/{{recording.id}}/delete" method="POST">
+            <button>Remove recording</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block script %}
+<!-- <script src="https://sdk.scdn.co/spotify-player.js"></script>
+<script src="/static/spotify.js"></script> -->
+{% endblock %}

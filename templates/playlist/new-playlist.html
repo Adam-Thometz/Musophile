@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Create new playlist{% endblock %}
+{% block content %}
+<h1>Create a new playlist</h1>
+<form action="/user/{{user.id}}/playlists/new" method="POST">
+    {{form.hidden_tag()}}
+    {% for field in form
+        if field.widget.input_type != 'hidden' %}
+    <div class="form-group">
+        {{field.label}}
+        {{field(class_="form-control")}}
+        {% for err in field.errors %}
+        <small class="form-text text-danger">
+            {{err}}
+        </small>
+        {% endfor %} 
+    </div>
+    {% endfor %}
+    <button class="btn btn-success btn-lg">Create playlist</button>
+</form>
+{% endblock %}

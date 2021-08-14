@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}{{user.username}}'s Profile{% endblock %}
+{% block content %}
+<h1>{{user.username}}</h1>
+<img src="{{user.img_url}}" alt="">
+<p>Role: {{user.role}}</p>
+
+<div class='user-playlists'>
+    {% if user.playlists %}
+    <h4>{{user.username}}'s Playlists</h4>
+    <ul>
+        {% for playlist in user.playlists %}
+        <li><a href="/playlists/{{playlist.id}}">{{playlist.name}}</a></li>
+        {% endfor %}
+    </ul>
+    <a href="/user/{{user.id}}/playlists">See this user's playlists!</a>
+    {% else %}
+    <strong>This user has not added any playlists yet.</strong>
+    {% endif %}
+</div>
+
+<div class="library">
+    {% if user.library %}
+    <h4>{{user.username}}'s Library</h4>
+    {% for recording in user.library %}
+    <div class="library-recording">
+        <ul>
+            <li>Title: {{recording.title}}</li>
+            <li>Artist: {{recording.artist}}</li>
+        </ul>
+    </div>
+    {% endfor %}
+    <a href="/user/{{user.id}}/library">See this user's full library!</a>
+    {% else %}
+    <strong>This user has not started their library yet.</strong>
+    {% endif %}
+</div>
+{% endblock %}

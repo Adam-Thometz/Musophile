@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}{{user.username}}'s Playlists{% endblock %}
+{% block content %}
+<h1>{{user.username}}'s Playlists</h1>
+{% for playlist in user.playlists %}
+<div>
+    <h4>{{playlist.name}}</h4>
+    <p>Description: {{playlist.description}}</p>
+    <ol>
+        {% for recording in (playlist.recordings)[:3] %}
+        <li>{{recording.title}} <small>- {{recording.artist}}</small></li>
+        {% endfor %}
+    </ol>
+    <ul>Tags found in playlist:
+        {% for tag in tags %}
+        <li><a href="/tags/{{tag.id}}">{{tag.name}}</a></li>
+        {% endfor %}
+    </ul>
+    <a href="/playlists/{{playlist.id}}">See full playlist</a>
+</div>
+{% endfor %}
+{% endblock %}

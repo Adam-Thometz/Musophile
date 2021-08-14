@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Welcome to Musophile!{% endblock %}
+{% block content %}
+<h1>Welcome to Musophile!</h1>
+<h4>Where music heads join heads...</h4>
+
+<a href="/search">Click here to search for music</a>
+
+<p>To get the most out of this app, <a href="/auth">allow Spotify access to Musophile</a></p>
+
+{% endblock %}
+
+https://accounts.spotify.com/authorize/?client_id=8e4449a65fb344aeb490c427582da2e7&response_type=code&redirect_uri=http://localhost:5000/callback&scope=streaming

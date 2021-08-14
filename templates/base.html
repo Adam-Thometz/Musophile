@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <nav>
+        {% if g.user %}
+        <span>Hello, {{g.user.username}}!</span>
+        <span><a href="/user/{{g.user.id}}">My Profile</a></span>
+        <span><a href="/user/{{g.user.id}}/library">My Library</a></span>
+        <span><a href="/user/{{g.user.id}}/playlists">My Playlists</a></span>
+        <span><a href="/user/{{g.user.id}}/playlists/new">Create a new playlist</a></span>
+        <span><a href="/search">Search</a></span>
+        <span><form action="/logout" method="POST"><button>Logout</button></form></span>
+        {% else %}
+        <span><a href="/search">Search</a></span>
+        <span><a href="/login">Login</a></span>
+        <span><a href="/register">Register</a></span>
+        {% endif %}
+    </nav>
+    <main id="content">
+        {% for category, message in get_flashed_messages(with_categories=True) %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        
+        {% block content %}{% endblock %}
+    </main>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.js" integrity="sha512-otOZr2EcknK9a5aa3BbMR9XOjYKtxxscwyRHN6zmdXuRfJ5uApkHB7cz1laWk2g8RKLzV9qv/fl3RPwfCuoxHQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</html>
+{% block script %}
+{% endblock %}

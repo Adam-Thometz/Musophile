@@ -1,0 +1,42 @@
+Capstone Project 1 proposal
+
+Name: Musophile
+
+Developer: Adam Thometz
+
+Goals for app
+For this project, I will be making a music database that takes music-related information from the vast MusicBrainz database and allows a user to make playlists. By giving users access to the MusicBrainz database through an easy-to-use interface, they would feel empowered to discover more about an artist, etc.
+
+Target users
+The app is designed for music enthusiasts and people whose work involves researching or curating music such as DJs, music teachers, and academics. As a current music teacher, being able to curate music based on, for example, instruments would allow me to more efficiently gather resources for my classroom.
+
+Data to be used
+As mentioned, the data would be coming from the MusicBrainz API and would use that data to interact with the Spotify API in order to create playlists. What sets the MusicBrainz database apart from other music databases is that it is community-maintained and open-source, which means that the information available on the database is constantly growing and includes obscure information. However, MusicBrainz does not actually store recordings, which is where the Spotify API comes in.
+
+DB schema:
+- user table
+- playlist table
+- song table
+- tag table
+
+Potential issues:
+- A recording is not available on Spotify. Considering that the target audience is mainly experts and connoisseurs, there could be an option where the user seeks out an example of a recording on their own (i.e. a Youtube video, file upload, etc), and they can add this in place of a Spotify recording.
+- Information is not available on MusicBrainz. Since MusicBrainz is open-source, the user will be encouraged to contribute information to the database.
+
+Sensitive info: other than user passwords and API keys, no sensitive information is being stored in the app.
+
+Functionality: 
+- Search function: search by artist, composition, instrument, region, record label, etc. If available, there will be a link to the song on Spotify attached to the result.
+- Playlist building: add songs to a playlist.
+
+User Flow:
+- A user who is not signed in will have access to the database search feature but in order to make playlists and sync them with their Spotify account, they would need to create an account.
+- The index page will have a welcome sign and contain a search bar so that the user can begin searching. The search bar will contain filters 
+
+What makes it more than CRUD?
+- The search functionality with different filters
+- The playlist feature
+
+Stretch goals:
+- Ability to search for songs by lyrics. The Genius API will be needed for this functionality.
+- Share playlists with other users on the site. Users can create groups depending on their interests, their work, shared affiliations (i.e. bands, universities, schools, DJ collectives, etc).

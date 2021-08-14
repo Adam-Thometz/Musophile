@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Edit {{playlist.name}}{% endblock %}
+{% block content %}
+<h1>Edit {{playlist.name}}</h1>
+<form action="/playlists/{{playlist_id}}/edit" method="POST">
+    {{form.hidden_tag()}}
+    {% for field in form
+        if field.widget.input_type != 'hidden' %}
+    <div class="form-group">
+        {{field.label}}
+        {{field(class_="form-control")}}
+        {% for err in field.errors %}
+        <small class="form-text text-danger">
+            {{err}}
+        </small>
+        {% endfor %} 
+    </div>
+    {% endfor %}
+    <button class="btn btn-success btn-lg">Edit</button>
+</form>
+{% endblock %}
