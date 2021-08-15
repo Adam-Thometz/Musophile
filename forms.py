@@ -1,14 +1,13 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SelectField
 from wtforms.fields.simple import TextAreaField
-from wtforms.validators import InputRequired, Email, Optional
-from wtforms.widgets.core import TextArea
+from wtforms.validators import InputRequired, Email, Optional, Length
 
 class RegisterForm(FlaskForm):
     """Registration form"""
 
     username = StringField("Username", validators=[InputRequired()])
-    password = PasswordField("Password", validators=[InputRequired()])
+    password = PasswordField("Password", validators=[InputRequired(), Length(min=8)])
     email = StringField("Email", validators=[InputRequired(), Email()])
     role = SelectField("Relationship with music", choices=[
         ('Student', 'Student'),

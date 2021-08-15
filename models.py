@@ -60,7 +60,6 @@ class Playlist(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     recordings = db.relationship('Recording', secondary='playlist_recordings', backref='playlists')
-    tags = db.relationship('Tag', secondary='playlist_tags', backref='playlists')
 
 
 class Recording(db.Model):
@@ -105,14 +104,6 @@ class PlaylistRecording(db.Model):
 
     playlist_id = db.Column(db.Integer, db.ForeignKey('playlists.id'), primary_key=True)
     recording_id = db.Column(db.Integer, db.ForeignKey('recordings.id'), primary_key=True)
-
-class PlaylistTag(db.Model):
-    """Playlist-Tag relationship"""
-
-    __tablename__ = 'playlist_tags'
-
-    playlist_id = db.Column(db.Integer, db.ForeignKey('playlists.id'), primary_key=True)
-    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'), primary_key=True)
 
 class RecordingTag(db.Model):
     """Recording-Tag relationship"""

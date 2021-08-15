@@ -5,7 +5,7 @@
 
 import os
 from unittest import TestCase
-from sqlalchemy import exc
+from sqlalchemy.exc import IntegrityError
 
 from app import app
 from models import db, User, Recording, Playlist, DEFAULT_IMG_URL
@@ -72,22 +72,21 @@ class UserModelTestCase(TestCase):
         self.assertNotEqual(u_test.password, 'texas1234')
         self.assertTrue(u_test.password.startswith('$2b$'))
 
-    def test_invalid_username(self):
+    def test_register_invalid_username(self):
         """Test invalid username"""
-        with self.assertRaises(exc.IntegrityError) as context:
-            User.register('Spongebob', 'texas1234', 'sandy@bikini-bottom.com', 'Composer/Arranger', None)
+        u_test = User.register('Spongebob', 'texas1234', 'sandy@bikini-bottom.com', 'Composer/Arranger', None)
+        with self.assertRaises(IntegrityError):
+            db.session.add(u_test)
+            db.session.commit()
 
-    # def test_invalid_email(self):
-    #     """Test invalid email"""
-    #     with self.assertRaises(exc.IntegrityError) as context:
-    #         User.register('SandyCheeks', 'texas1234', None, 'Composer/Arranger', None)
+    def test_register_invalid_email(self):
+        """Test invalid email"""
+        u_test = User.register('SandyCheeks', 'texas1234', 'sponge@bikini-bottom.com', 'Composer/Arranger', None)
+        with self.assertRaises(IntegrityError):
+            db.session.add(u_test)
+            db.session.commit()
     
-    def test_invalid_password(self):
-        """Test invalid password"""
-        with self.assertRaises(ValueError) as context:
-            User.register('SandyCheeks', None, 'sandy@bikini-bottom.com', 'Composer/Arranger', None)
-
-    # Authentication tests
+    # Authentication tests (login/Spotify)
 
     def test_authenticate(self):
         """Test successful authentication"""
@@ -95,19 +94,20 @@ class UserModelTestCase(TestCase):
         self.assertIsNotNone(u_test)
         self.assertEqual(u_test.id, 1)
     
-    def test_invalid_username(self):
+    def test_auth_invalid_username(self):
         """Test invalid username"""
         self.assertFalse(User.authenticate('plankton', 'password'))
 
-    def test_invalid_password(self):
+    def test_auth_invalid_password(self):
         """Test invalid password"""
         self.assertFalse(User.authenticate('Spongebob', 'mayonaise_inst12'))
+
 
     # Functionality/relationship tests
 
     def test_user_library(self):
         """Test user library"""
-        r = Recording(mbid = '12345', title = 'F.U.N.', artist = 'Spongebob Squarepants', release = 'Spongebob Squarepants', duration = 78)
+        r = Recording(mbid = '12345', title = 'F.U.N.', artist = 'Spongebob Squarepants', release = 'Spongebob Squarepants')
         db.session.add(r)
         db.session.commit()
 

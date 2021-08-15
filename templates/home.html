@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}Welcome to Musophile!{% endblock %}
 {% block content %}
-<h1>Welcome to Musophile!</h1>
-<h4>Where music heads join heads...</h4>
-
-<a href="/search">Click here to search for music</a>
-
-<p>To get the most out of this app, <a href="/auth">allow Spotify access to Musophile</a></p>
+<div class="home-page">
+    <div class="home-page-info">
+        <h1 class="main-title">Welcome to Musophile!</h1>
+        <h4>Where music heads join heads...</h4>
+        
+        <div class="call-to-action">
+            <a href="/register" class="btn btn-lg">Click here to sign up!</a>
+        </div>
+        <a href="/login" class="btn btn-sm">Login</a>
+    </div>
+</div>
 
 {% endblock %}
 

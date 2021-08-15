@@ -1,9 +1,258 @@
+/* Main colors: */
+/* neutral color: very light blue rgb(212, 221, 247) */
+/* middle color: blue: rgb(23, 66, 184) */
+/* intense color: orange: rgb(211, 130, 9) */
+
+/* inspiration for colors: Eastern bluebird
+https://www.allaboutbirds.org/guide/assets/photo/63740061-720px.jpg */
+
+/* General stylng */
+body {
+    color: rgb(23, 66, 184);
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(rgb(182,237,255) 0%, rgb(98, 187, 255) 100%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    margin: 20px;
+}
+
+h1 {
+    padding: 10px;
+    margin: 10px;
+}
+
+nav {
+    color: rgb(212, 221, 247);
+    background-color: rgb(23, 66, 184);
+}
+
+nav a {
+    text-decoration: none;
+    color: rgb(212, 221, 247);
+}
+
+nav .nav-user {
+    color: rgb(252, 201, 126);
+    margin: 10px;
+}
+
+nav .nav-options {
+    position: relative;
+    left: 0;
+}
+
+nav .nav-options a,
+nav .nav-options button {
+    color: rgba(252, 201, 126, 0.856);
+}
+
+.inline {
+    display: inline;
+}
+
+iframe {
+    display: block;
+}
+button {
+    margin: 5px 0;
+}
+
+/* Home page */
+.home-page {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    left: 0;
+    z-index: -1;
+    background-image: url("headphones.jpeg");
+    background-size: cover;
+    background-position: center center;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    text-shadow: 0 0 1px #66757f;
+}
+
+.home-page-info {
+    position: absolute;
+    left: 10px;
+    top: 100px;
+    color: rgb(31, 60, 146);
+}
+
+.main-title {
+    text-align: center;
+    margin: 25px;
+    padding: 10px;
+    color: rgb(23, 66, 184);
+}
+
+.call-to-action {
+    background-color: rgb(231, 139, 0);
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 25px;
+    margin: 15%;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+}
+
+.call-to-action img {
+    width: 100%;
+    height: 100%;
+}
+
 .hidden {
     display: none;
 }
 
-.search-result {
+
+/* Search page */
+.token-indicator {
+    color: rgb(56, 56, 128);
+    background-color: rgb(255, 116, 116);
+    border: black;
+    border-radius: 15px;
+    padding: 15px;
+    margin: 20px;
+}
+
+.has-token {
+    background-color: rgb(65, 177, 65);
+}
+
+#searchWrapper {
+    padding: 10px;
+    margin: 20px;
     display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.search-type, .search-word, .limit {
+    width: 30%;
+
+}
+
+#searchResults {
+    padding: 10px;
+    margin: 10px;
+    display: inline-block
+}
+
+.search-result {
+    padding: 10px;
+    margin: 20px;
+    width: 30%;
+    display: inline-block;
     border: 1px solid black;
     margin: 10px;
+}
+
+.search-result-options {
+    position: relative;
+    top: 0;
+    right: 0;
+}
+
+.add-song {
+    align-items: center;
+}
+
+/* User page */
+.user-info {
+    margin: 20px;
+    text-align: center;
+}
+
+.user-img {
+    border-radius: 10px;
+    max-width: 40%;
+    max-height: 40%;
+}
+
+.music-info {
+    display: flex;
+}
+
+.user-playlists, .library {
+    padding: 10px;
+    margin: 20px;
+    width: 50%;
+    display: inline-block;
+    border: 1px solid black;
+    margin: 10px;
+    top: 0;
+}
+
+/* Library page */
+
+.library-card {
+    border: 1px solid black;
+    width: 30%;
+    margin: 10px;
+    display: inline-block;
+}
+
+.library-recording-info {
+    margin: 5;
+}
+
+.library-options {
+    margin: 5px;
+    text-align: center;
+}
+
+.library-recording-info > h4 {
+    text-align: center;
+    margin: 10px;
+}
+
+.library-player {
+    display: block;
+    margin: 0 auto;
+}
+
+/* All playlists page */
+
+.playlist {
+    border: 1px solid black;
+    padding: 10px;
+    margin: 10px;
+    display: inline-block;
+    width: 30%;
+}
+
+.playlist-name {
+    text-align: center;
+}
+
+/* Single playlist page */
+
+.playlist-song {
+    height: 200px;
+    padding: 10px 50px;
+    margin: 10px 50px;
+}
+
+.playlist-comments {
+    border: 2px solid rgb(185, 111, 0);
+    border-radius: 10px;
+    width: 50%;
+    padding: 25px;
+    margin: 10px;
+}
+
+/* Tag list */
+
+.tag-song {
+    display: inline-block;
+    width: 45%;
+    margin: 25px;
 }

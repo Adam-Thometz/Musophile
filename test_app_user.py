@@ -6,7 +6,7 @@
 import os
 from unittest import TestCase
 
-from app import app, CURR_USER_KEY
+from app import ACCESS_TOKEN, app, CURR_USER_KEY
 from models import  db, User, Recording
 
 os.environ['DATABASE_URL'] = "postgresql:///musophile_test"
@@ -16,6 +16,7 @@ db.create_all()
 app.config['WTF_CSRF_ENABLED'] = False
 
 TEST_GET_RECORDING = 'e8424e86-fafc-43a3-8577-c8a4c0a4456d'
+TEST_SPOTIFY_URI = '0zNdw7vzK7nVtMlNkjVRfb'
 
 class UserViewTestCase(TestCase):
     """Test user views"""
@@ -52,7 +53,7 @@ class UserViewTestCase(TestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertIn('Welcome to Musophile!', html)
-            self.assertIn('<span><a href="/login">Login</a></span>', html)
+            self.assertIn('<b>Hello, stranger!</b>', html)
 
     def test_homepage_with_user(self):
         """Does the navbar show user buttons?"""
@@ -64,7 +65,7 @@ class UserViewTestCase(TestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertIn('Welcome to Musophile!', html)
-            self.assertIn('<span>Hello, Spongebob!</span>', html)
+            self.assertIn('<b>Hello, Spongebob!</b>', html)
 
     def test_show_user(self):
         """Does a specific user show up?"""
@@ -84,7 +85,7 @@ class UserViewTestCase(TestCase):
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.u.id
-            resp = c.post(f'/user/add-recording/{TEST_GET_RECORDING}', follow_redirects=True)
+            resp = c.post(f'/user/add-recording/{TEST_GET_RECORDING}/{TEST_SPOTIFY_URI}', follow_redirects=True)
             html = str(resp.data)
 
             self.assertEqual(resp.status_code, 200)
@@ -98,8 +99,6 @@ class UserViewTestCase(TestCase):
             title = 'F.U.N.',
             artist = 'Spongebob Squarepants',
             release = 'Spongebob Squarepants',
-            duration = 78,
-            isrcs = []
         )
         db.session.add(r)
         db.session.commit()
@@ -138,4 +137,4 @@ class UserViewTestCase(TestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertNotIn('F.U.N.', html)
-            self.assertIn('Recording successfully removed!', html)
+            self.assertIn('Successfully removed!', html)

@@ -9,13 +9,11 @@ const $searchBtn = $('#searchBtn')
 const $displaySearch = $('.display-search');
 
 const $addSong = $('.add-song')
-const $accessToken = $('#accessToken')
 
-accessToken = $accessToken.text()
-localStorage.setItem('access_token', accessToken)
+const $hasToken = $('#hasToken')
 
 const MUSICBRAINZ_API_URL = 'https://musicbrainz.org/ws/2';
-const SPOTIFY_API_URL = 'https://api.spotify.com/v1/search/'
+const SEARCH_URL = 'http://localhost:5000/search/api'
 // The MusicBrainz API returns a JSON response if you put the following string at the end of the request URL:
 const JSON_FMT = 'fmt=json';
 
@@ -70,21 +68,10 @@ async function generateResponseHTML(result) {
     return html;
 }
 
-$searchBtn.click(displayResults)
-
 async function getSpotifyURIAndHTML(title, artist, id) {
     console.dir('getSpotifyURIAndHTML')
-    resp = await axios.get(`${SPOTIFY_API_URL}`, {
-        params: {
-            'q': `${title} ${artist}`,
-            'type': 'track',
-            'limit': 1
-        }, 
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-        }
-    })
+    resp = await axios.get(`${SEARCH_URL}/${title}/${artist}`)
+    
     if (resp.data['tracks']['items'].length > 0){
         uri = resp.data['tracks']['items'][0]['uri'].slice(14)
         return `<div class="player">
@@ -92,16 +79,25 @@ async function getSpotifyURIAndHTML(title, artist, id) {
             </div>
             <aside class="search-result-options">
                 <form action="/user/add-recording/${id}/${uri}" method="POST">
-                    <button class='add-song'>Add to library</button>
+                    <button class='add-song btn btn-sm btn-outline-primary'>Add to library</button>
                 </form>
             </aside>
         </div>`
     } else {
-        return `<aside class="search-result-options">
+        return `<div class="player">
+        <strong>This song wasn't found on Spotify</strong>
+    </div>
+    <aside class="search-result-options">
                 <form action="/user/add-recording/${id}/0" method="POST">
-                    <button class='add-song'>Add to library</button>
+                    <button class='add-song btn btn-sm btn-outline-primary'>Add to library</button>
                 </form>
             </aside>
         </div>`
     }
 }
+
+if ($hasToken.hasClass('has-token')) {
+    $searchBtn.removeAttr('disabled')
+}
+
+$searchBtn.click(displayResults)

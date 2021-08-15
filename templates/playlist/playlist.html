@@ -2,42 +2,42 @@
 {% block title %}{{playlist.name}}{% endblock %}
 {% block content %}
 <h1>{{playlist.name}}</h1>
-<blockquote>{{playlist.description}}</blockquote>
+<blockquote class="playlist-comments"><b>Description:</b> {{playlist.description}}</blockquote>
 <ol>
     {% if playlist.recordings %}
     {% for recording in playlist.recordings %}
-    <li>{{recording.title}} <small>- {{recording.artist}}</small>
-    <form action="/playlists/{{playlist.id}}/remove/{{recording.id}}" method="POST">
-        <button>X</button>    
-    </form></li>
-    {% if recording.spotify_uri %}
-    <iframe src="https://open.spotify.com/embed/track/{{recording.spotify_uri}}" width="100%" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-    {% endif %}
+    <li><b>{{recording.title}}</b> <small>- {{recording.artist}}</small>
+        {% if recording.spotify_uri %}
+        <iframe src="https://open.spotify.com/embed/track/{{recording.spotify_uri}}" width="80%" height="100" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+        {% endif %}
+        <form action="/playlists/{{playlist.id}}/remove/{{recording.id}}" method="POST">
+            <button class="btn btn-sm btn-outline-danger">Remove from playlist</button>    
+        </form></li>
     {% endfor %}
     {% else %}
     <p>
         This playlist is empty. 
         {% if g.user.id == playlist.user_id %}
+        Click 'Add to Playlist' to get started.
         {% endif %}
     </p>
     {% endif %}
 </ol>
-{% if playlist.tags %}
 <p>Tags found in playlist:</p>
 <ul>
-    {% for tag in playlist.tags %}
-    <li><a href="/tags/{{tag.id}}">{{tag.name}}</a></li>
+    {% for recording in playlist.recordings %}
+        {% for tag in recording.tags %}
+        <li><a href="/tags/{{tag.id}}">{{tag.name}}</a></li>
+        {% endfor %}
     {% endfor %}
 </ul>
-{% endif %}
 {% if g.user.id == playlist.user_id %}
-<a href="/playlists/{{playlist.id}}/edit">Edit playlist</a>
-<form action="/playlists/{{playlist.id}}/add" method="POST">
-    <button>Add to playlist</button>
+<a href="/playlists/{{playlist.id}}/edit" class="btn btn-sm btn-outline-secondary">Edit playlist</a>
+<form action="/playlists/{{playlist.id}}/add" method="POST" class="inline">
+    <button class="btn btn-sm btn-outline-secondary">Add to playlist</button>
 </form>
-<form action="/playlists/{{playlist.id}}/delete" method="POST">
-    <button>Remove playlist</button>
+<form action="/playlists/{{playlist.id}}/delete" method="POST" class="inline">
+    <button class="btn btn-sm btn-outline-danger">Delete playlist</button>
 </form>
-<a href="/user/{{playlist.user_id}}/library">Library</a>
 {% endif %}
 {% endblock %}

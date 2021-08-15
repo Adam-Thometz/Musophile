@@ -3,13 +3,15 @@ from functools import wraps
 from flask_debugtoolbar import DebugToolbarExtension
 import musicbrainzngs as mb
 import _startup
+import _flask_spotify_auth
 
 from models import db, connect_db, User, Playlist, Recording, Tag
 from forms import RegisterForm, LoginForm, EditRecordingForm, PlaylistForm, AddToPlaylistForm
-from helpers import create_tag, get_recording_info, get_spotify_uri
+from helpers import create_tag, get_recording_info, get_spotify_info
 from sqlalchemy.exc import IntegrityError
 
 CURR_USER_KEY = 'curr_user'
+ACCESS_TOKEN = 'access_token'
 
 app = Flask(__name__)
 
@@ -46,7 +48,7 @@ def login_required(f):
         if g.user:
             return f(*args, **kwargs)
         else:
-            flash("You must be logged in to do that.")
+            flash("You must be logged in to do that.", 'warning')
             return redirect('/')
     return func
 
@@ -61,6 +63,7 @@ def do_login(user):
 @app.route('/')
 def home_page():
     """Landing page"""
+    session.pop(ACCESS_TOKEN)
     return render_template('home.html')
 
 @app.errorhandler(404)
@@ -96,16 +99,17 @@ def register():
         email = form.email.data
         role = form.role.data
         img_url = form.img_url.data if form.img_url.data else None
+        
+        new_user = User.register(username, password, email, role, img_url)
         try:
-            new_user = User.register(username, password, email, role, img_url)
+            db.session.add(new_user)
+            db.session.commit()
         except IntegrityError:
-            flash('There was something wrong with registration. Try a different username or email.')
-
-        db.session.add(new_user)
-        db.session.commit()
+            flash('There was something wrong with registration. Try a different username or email.', 'danger')
+            return redirect('/register')
 
         do_login(new_user)
-        flash("Account successfully created!")
+        flash("Account successfully created!", 'success')
         return redirect('/')
     else:
         return render_template('user/register.html', form=form)
@@ -114,17 +118,18 @@ def register():
 def login():
     """Log in an existing user"""
     if g.user:
-        flash("You're already logged in!")
+        flash("You're already logged in!", 'warning')
+        return redirect('/')
     form = LoginForm()
     if form.validate_on_submit():
         user = User.authenticate(form.username.data, form.password.data)
 
         if user:
             do_login(user)
-            flash(f"Welcome back, {user.username}!")
+            flash(f"Welcome back, {user.username}!", 'success')
             return redirect('/')
         
-        flash("Invalid credentials")
+        flash("Invalid credentials", 'danger')
     
     return render_template('user/login.html', form=form)
 
@@ -132,18 +137,35 @@ def login():
 def logout():
     """Log out of account"""
     session.pop(CURR_USER_KEY)
-    flash("Logged out successfully")
+    flash("Goodbye for now!", 'primary')
     return redirect('/')
-
-@app.route('/search')
-def search_page():
-    """Search page"""
-    token = _startup.getAccessToken()
-    return render_template('search.html', token=token)
 
 ###########
 # Authenticated user routes
 ###########
+
+@app.route('/search')
+@login_required
+def search_page():
+    """Search page"""
+    token = _startup.getAccessToken()
+    if token and (ACCESS_TOKEN not in session):
+        session[ACCESS_TOKEN] = token
+    
+    return render_template('search.html')
+
+@app.route('/search/api/<title>/<artist>')
+@login_required
+def get_info(title, artist):
+    spotify_info = get_spotify_info(title, artist, session[ACCESS_TOKEN][0])
+    if 'error' in spotify_info:
+        if spotify_info['error'] == 401:
+            token = _flask_spotify_auth.refreshAuth()
+            session[ACCESS_TOKEN] = token
+                
+            flash('Something went wrong with your search but we fixed it! Try again', 'info')
+            return redirect('/search')
+    return spotify_info
 
 @app.route('/user/<int:user_id>')
 @login_required
@@ -188,7 +210,7 @@ def add_recording_to_library(recording_id, spotify_uri):
     user.library.append(recording)
 
     db.session.commit()
-
+    flash(f'{recording.title} successfully added to your library!', 'success')
     return redirect(f'/user/{g.user.id}')
 
 @app.route('/user/<int:user_id>/library/<int:recording_id>/edit', methods=['GET', 'POST'])
@@ -205,7 +227,7 @@ def edit_recording(user_id, recording_id):
                 create_tag(tag, recording)
         
         db.session.commit()
-        flash('Successfully updated a song in your library!')
+        flash(f'Successfully updated {recording.title} in your library!', 'success')
         return redirect(f'/user/{user_id}/library')
     
     return render_template('user/edit-recording.html', recording=recording, form=form)
@@ -219,7 +241,7 @@ def delete_recording(recording_id, user_id):
 
     db.session.delete(recording)
     db.session.commit()
-    flash('Recording successfully removed!')
+    flash('Successfully removed!', 'success')
     return redirect(f'/user/{user_id}/library')
 
 ###########
@@ -264,7 +286,7 @@ def new_playlist(user_id):
         db.session.add(new_playlist)
         db.session.commit()
 
-        flash('Playlist successfully made')
+        flash(f'Playlist {new_playlist.name} successfully made', 'success')
         return redirect(f'/user/{user.id}')
     return render_template('playlist/new-playlist.html', user=user, form=form)
 
@@ -279,13 +301,9 @@ def add_recording_to_playlist(playlist_id):
     if form.validate_on_submit():
         recording = Recording.query.get_or_404(form.recording.data)
         playlist.recordings.append(recording)
-        if recording.tags:
-            tags = [tag.name for tag in recording.tags]
-            for tag in tags:
-                create_tag(tag, playlist)
         db.session.commit()
         
-        flash(f'Successfully added song to {playlist.name}')
+        flash(f'Successfully added {recording.title} to {playlist.name}', 'success')
         return redirect(f'/playlists/{playlist.id}')
 
     return render_template('playlist/add-to-playlist.html', playlist=playlist, form=form)
@@ -299,7 +317,7 @@ def remove_recording_from_playlist(playlist_id, recording_id):
     # import pdb; pdb.set_trace()
     playlist.recordings.remove(recording)
     db.session.commit()
-    flash(f'Successfully removed song from {playlist.name}')
+    flash(f'Successfully removed recording from {playlist.name}', 'success')
     return redirect(f'/playlists/{playlist_id}')
 
 @app.route('/playlists/<int:playlist_id>/edit', methods=['GET', 'POST'])
@@ -313,7 +331,7 @@ def edit_playlist(playlist_id):
         playlist.description = form.description.data
         db.session.commit()
 
-        flash(f'Successfully edited {playlist.name}')
+        flash(f'Successfully edited {playlist.name}', 'success')
         return redirect(f'/playlists/{playlist.id}')
 
     return render_template('playlist/edit-playlist.html', playlist=playlist, form=form)
@@ -327,7 +345,7 @@ def delete_playlist(playlist_id):
     db.session.delete(playlist)
     db.session.commit()
 
-    flash(f'Successfully deleted {playlist.name}')
+    flash(f'Successfully deleted playlist', 'success')
     return redirect(f'/user/{user.id}')
 
 ###########
@@ -349,5 +367,5 @@ def remove_tag(tag_id, recording_id):
     recording = Recording.query.get_or_404(recording_id)
     recording.tags.remove(tag)
     db.session.commit()
-    flash(f'Successfully removed {tag.name} tag')
+    flash(f'Successfully removed {tag.name} tag from {recording.title}', 'success')
     return redirect(f'/user/{g.user.id}/library')

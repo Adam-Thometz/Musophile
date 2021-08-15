@@ -11,17 +11,21 @@
 <body>
     <nav>
         {% if g.user %}
-        <span>Hello, {{g.user.username}}!</span>
-        <span><a href="/user/{{g.user.id}}">My Profile</a></span>
-        <span><a href="/user/{{g.user.id}}/library">My Library</a></span>
-        <span><a href="/user/{{g.user.id}}/playlists">My Playlists</a></span>
-        <span><a href="/user/{{g.user.id}}/playlists/new">Create a new playlist</a></span>
-        <span><a href="/search">Search</a></span>
-        <span><form action="/logout" method="POST"><button>Logout</button></form></span>
+        <span class="nav-user"><b>Hello, {{g.user.username}}!</b></span>
+        <div class="nav-options">
+            <span><a href="/user/{{g.user.id}}" class="btn btn-sm">My Profile</a></span>
+            <span><a href="/user/{{g.user.id}}/library" class="btn btn-sm">My Library</a></span>
+            <span><a href="/user/{{g.user.id}}/playlists" class="btn btn-sm">My Playlists</a></span>
+            <span><a href="/user/{{g.user.id}}/playlists/new" class="btn btn-sm">Create a new playlist</a></span>
+            <span><a href="/search" class="btn btn-sm ">Search</a></span>
+            <span><form action="/logout" method="POST" style="display: inline;"><button class="btn btn-sm">Logout</button></form></span>
+        </div>
         {% else %}
-        <span><a href="/search">Search</a></span>
-        <span><a href="/login">Login</a></span>
-        <span><a href="/register">Register</a></span>
+        <span class="nav-user"><b>Hello, stranger!</b></span>
+        <div class="nav-options">
+            <span class="btn btn-sm"><a href="/login">Login</a></span>
+            <span class="btn btn-sm"><a href="/register">Register</a></span>
+        </div>
         {% endif %}
     </nav>
     <main id="content">

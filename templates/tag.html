@@ -9,8 +9,6 @@
         <h4>{{recording.title}}</h4>
         <ul>
             <li>performed by <b>{{recording.artist}}</b></li>
-            <li>album: <b>{{recording.release}}</b></li>
-            <li>length (in seconds): {{recording.duration}}</li>
         </ul>
         {% if recording.spotify_uri %}
         <iframe src="https://open.spotify.com/embed/track/{{recording.spotify_uri}}" width="100%" height="380" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>

@@ -2,7 +2,7 @@
 {% block title %}Edit {{playlist.name}}{% endblock %}
 {% block content %}
 <h1>Edit {{playlist.name}}</h1>
-<form action="/playlists/{{playlist_id}}/edit" method="POST">
+<form action="/playlists/{{playlist.id}}/edit" method="POST">
     {{form.hidden_tag()}}
     {% for field in form
         if field.widget.input_type != 'hidden' %}

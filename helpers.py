@@ -1,18 +1,14 @@
 import requests
-from math import floor
-
-from sqlalchemy.exc import IntegrityError
 import musicbrainzngs as mb
 
 from models import db, Tag
-from _startup import TOKEN_DATA
+from _flask_spotify_auth import refreshAuth
 
-MUSICBRAINZ_API_URL = 'https://musicbrainz.org/ws/2'
 SPOTIFY_API_SEARCH = 'https://api.spotify.com/v1/search/'
 
 def get_recording_info(id):
     """Helper function to get recording info"""
-    recording = mb.get_recording_by_id(id, includes=['artists', 'releases', 'isrcs', 'tags'])
+    recording = mb.get_recording_by_id(id, includes=['artists', 'releases', 'tags'])
 
     title = recording['title']
     try:
@@ -34,26 +30,29 @@ def get_recording_info(id):
 
     return data
 
-def create_tag(tag, target):
+def get_spotify_info(title, artist, token):
+    params = {
+        'q': f'{title} {artist}',
+        'type': 'track',
+        'limit': 1
+    }
+    headers = {
+        'Authorization': f'Bearer {token}',
+        'Content-Type': 'application/json'
+    }
+    res = requests.get(f'{SPOTIFY_API_SEARCH}', params=params, headers=headers)
+    
+    return res.json()
+
+def create_tag(tag, recording):
     try_tag = Tag.query.filter_by(name=tag).one_or_none()
     if try_tag:
-        target.tags.append(try_tag)
+        recording.tags.append(try_tag)
         db.session.commit()
     else:
         new_tag = Tag(name=tag)
         db.session.add(new_tag)
         db.session.commit()
 
-        target.tags.append(new_tag)
+        recording.tags.append(new_tag)
         db.session.commit()
-
-def get_spotify_uri(title, artist):
-    token = TOKEN_DATA[0]
-    res = requests.get(f'{SPOTIFY_API_SEARCH}?q={title}+{artist}&type=track&limit=1', headers={
-        'Authorization': f'Bearer {token}',
-        'Content-Type': 'application/json'
-    })
-    import pdb; pdb.set_trace()
-    json = res.json()
-    spotify_uri = json['tracks']['items'][0]['uri']
-    return spotify_uri[14:]

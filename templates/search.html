@@ -3,29 +3,33 @@
 {% block content %}
 <h1>Search</h1>
 
-<p>To get the most out of this app, <a href="/auth">allow Spotify access to Musophile</a></p>
-<p id="accessToken">{{token[0]}}</p>
-
+{% if 'access_token' in session %}
+<span id="hasToken" class="token-indicator has-token">You are connected to Spotify! You may now search for tracks and hear them.</span>
+{% else %}
+<a href="/auth" id="hasToken" class="token-indicator">Before you can search, you must connect to Spotify. Click here to do so!</a>
+{% endif %}
 <div id="searchWrapper">
-    <label for="searchType">I am searching by...</label>
-    <select name="attributes" id="searchType">
-        <option value="artist">Artist</option>
-        <option value="recording" selected>Recording</option>
-        <option value="release">Release</option>
-        <option value="tag">Tag</option>
-    </select>
-</div>
-<div class="display-search">
-    <label for="searchBar">Type keywords here:</label>
-    <input type="search" name="q" id="searchBar">
-</div>
-<div>
-    <label for="limit">How many results?</label>
-    <input type="number", id="limit" min="1", max="100", value="25">
+    <div class="search-type">
+        <label for="searchType" class="form-label">I am searching by...</label>
+        <select name="attributes" id="searchType" class="form-select">
+            <option value="artist">Artist</option>
+            <option value="recording" selected>Recording</option>
+            <option value="release">Release</option>
+            <option value="tag">Tag</option>
+        </select>
+    </div>
+    <div class="search-word">
+        <label for="searchBar" class="form-label">Type keywords here:</label>
+        <input type="search" class="form-control" name="q" id="searchBar">
+    </div>
+    <div class="limit">
+        <label for="limit" class="form-label">How many results?</label>
+        <input type="number" class="form-control" id="limit" min="1", max="100", value="25">
+    </div>
 </div>
 
-<button id="searchBtn">Search!</button>
-
+<button class="btn btn-outline-primary" id="searchBtn" disabled>Search!</button>
+<hr>
 <div id="searchResults">
 
 </div>

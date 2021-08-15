@@ -28,11 +28,8 @@ def getToken(code, client_id, client_secret, redirect_uri):
         "client_id": client_id,
         "client_secret": client_secret
     }
-        
-     
-    # encoded = base64.b64encode("{}:{}".format(client_id, client_secret))
+
     headers = {"Content-Type" : HEADER} 
-    # , "Authorization" : "Basic {}".format(encoded)
 
     post = requests.post(SPOTIFY_URL_TOKEN, params=body, headers=headers)
     return handleToken(json.loads(post.text))
@@ -40,7 +37,7 @@ def getToken(code, client_id, client_secret, redirect_uri):
 def handleToken(response):
     auth_head = {"Authorization": "Bearer {}".format(response["access_token"])}
     REFRESH_TOKEN = response["refresh_token"]
-    return [response["access_token"], auth_head, response["scope"], response["expires_in"]]
+    return [response["access_token"], auth_head, response["scope"], response["expires_in"], REFRESH_TOKEN]
 
 def refreshAuth():
     body = {
