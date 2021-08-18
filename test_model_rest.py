@@ -1,7 +1,7 @@
 """Recording model tests"""
 
-# run tests by typing in terminal:
-#    python -m unittest test_model_recording.py
+# run tests by typing in the terminal:
+# python -m unittest test_model_rest.py
 
 import os
 from unittest import TestCase
@@ -9,10 +9,8 @@ from unittest import TestCase
 from app import app
 from models import db, Recording, User, Playlist, Tag, DEFAULT_IMG_URL
 
-os.environ['DATABASE_URL'] = "postgresql:///musophile_test"
-
-
-db.create_all()
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///musophile_test"
+app.config['SQLALCHEMY_ECHO'] = False
 
 class RecordingModelTestCase(TestCase):
     """Test recording model."""
@@ -20,7 +18,7 @@ class RecordingModelTestCase(TestCase):
         db.drop_all()
         db.create_all()
 
-        r = Recording(mbid = '12345', title = 'F.U.N.', artist = 'Spongebob Squarepants', release = 'Spongebob Squarepants', duration = 78)
+        r = Recording(mbid = '12345', title = 'F.U.N.', artist = 'Spongebob Squarepants', release = 'Spongebob Squarepants')
         db.session.add(r)
         db.session.commit()
 
@@ -51,15 +49,14 @@ class RecordingModelTestCase(TestCase):
             mbid = '245724676rttht',
             title = 'The Campfire Song',
             artist = 'Sponge & Pat',
-            release = 'Fun Times',
-            duration = 60
+            release = 'Fun Times'
         )
         db.session.add(r)
         db.session.commit()
 
         self.assertEqual(len(r.tags), 0)
         self.assertEqual(len(r.playlists), 0)
-        self.assertEqual(len(r.users), 0)
+        self.assertEqual(len(r.user), 0)
     
     def test_playlist_model(self):
         """Basic playlist model functionality"""
@@ -71,7 +68,7 @@ class RecordingModelTestCase(TestCase):
         db.session.add(p)
         db.session.commit()
 
-        self.assertEqual(len(p.tags), 0)
+        self.assertEqual(p.name, "Gary's Jamz")
         self.assertEqual(len(p.recordings), 0)
 
     def test_tag_model(self):
@@ -82,7 +79,6 @@ class RecordingModelTestCase(TestCase):
         db.session.add(t)
         db.session.commit()
 
-        self.assertEqual(len(t.playlists), 0)
         self.assertEqual(len(t.recordings), 0)
 
     # Recording relationships
@@ -90,7 +86,7 @@ class RecordingModelTestCase(TestCase):
     def test_recording_user_relationship(self):
         """Testing library relationship"""
         self.u.library.append(self.r)
-        self.assertEqual(len(self.r.users), 1)
+        self.assertEqual(self.r.user, [self.u])
         self.assertEqual(len(self.u.library), 1)
         self.assertEqual(self.u.library[0].title, 'F.U.N.')
     

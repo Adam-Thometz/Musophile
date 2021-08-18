@@ -1,6 +1,6 @@
 """Message View tests."""
 
-# run these tests by typing in the terminal:
+# run tests by typing in the terminal:
 # python -m unittest test_app_user.py
 
 import os
@@ -9,7 +9,8 @@ from unittest import TestCase
 from app import ACCESS_TOKEN, app, CURR_USER_KEY
 from models import  db, User, Recording
 
-os.environ['DATABASE_URL'] = "postgresql:///musophile_test"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///musophile_test"
+app.config['SQLALCHEMY_ECHO'] = False
 
 db.create_all()
 

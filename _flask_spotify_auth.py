@@ -6,9 +6,10 @@
 # Version: v0.2
 # Original Publish Date: 29 Sept, 2018
 # Access Date: 13 Aug, 2021
+
 ##################
 
-import base64, json, requests
+import json, requests
 
 SPOTIFY_URL_AUTH = 'https://accounts.spotify.com/authorize/?'
 SPOTIFY_URL_TOKEN = 'https://accounts.spotify.com/api/token/'
@@ -39,12 +40,11 @@ def handleToken(response):
     REFRESH_TOKEN = response["refresh_token"]
     return [response["access_token"], auth_head, response["scope"], response["expires_in"], REFRESH_TOKEN]
 
-def refreshAuth():
+def refreshAuth(refresh_token):
     body = {
         "grant_type" : "refresh_token",
-        "refresh_token" : REFRESH_TOKEN
+        "refresh_token" : refresh_token
     }
-
     post_refresh = requests.post(SPOTIFY_URL_TOKEN, data=body, headers=HEADER)
     p_back = json.dumps(post_refresh.text)
     

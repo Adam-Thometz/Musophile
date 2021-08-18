@@ -115,8 +115,8 @@ button {
 
 /* Search page */
 .token-indicator {
-    color: rgb(56, 56, 128);
-    background-color: rgb(255, 116, 116);
+    color: rgb(33, 41, 39);
+    background-color: rgb(255, 116, 116, 0.781);
     border: black;
     border-radius: 15px;
     padding: 15px;
@@ -124,7 +124,7 @@ button {
 }
 
 .has-token {
-    background-color: rgb(65, 177, 65);
+    background-color: rgba(65, 177, 65, 0.781);
 }
 
 #searchWrapper {
@@ -151,8 +151,9 @@ button {
     margin: 20px;
     width: 30%;
     display: inline-block;
-    border: 1px solid black;
+    border: 1px solid rgb(23, 66, 184);
     margin: 10px;
+    box-shadow: 5px 5px 5px rgb(211, 130, 9);
 }
 
 .search-result-options {

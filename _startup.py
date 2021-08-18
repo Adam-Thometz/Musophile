@@ -8,7 +8,7 @@
 # Access Date: 13 Aug, 2021
 ##################
 
-from _flask_spotify_auth import getAuth, refreshAuth, getToken
+from _flask_spotify_auth import getAuth, getToken
 from secret_codes import CLIENT_ID, CLIENT_SECRET
 
 #Port and callback url can be changed or left to localhost:5000
@@ -27,10 +27,12 @@ def getUser():
 def getUserToken(code):
     global TOKEN_DATA
     TOKEN_DATA = getToken(code, CLIENT_ID, CLIENT_SECRET, "{}:{}/callback/".format(CALLBACK_URL, PORT))
- 
-def refreshToken(time):
-    time.sleep(time)
-    TOKEN_DATA = refreshAuth()
+
+# This function, along with the refreshAuth function in _flask_spotify_auth, was rewritten into get_refresh_auth in the helper file
+
+# def refreshToken(time):
+#     time.sleep(time)
+#     TOKEN_DATA = refreshAuth()
 
 def getAccessToken():
     return TOKEN_DATA

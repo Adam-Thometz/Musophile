@@ -1,6 +1,6 @@
 """Message View tests."""
 
-# run these tests by typing in the terminal:
+# run tests by typing in the terminal:
 # python -m unittest test_app_rest.py
 
 import os
@@ -9,7 +9,8 @@ from unittest import TestCase
 from app import app, CURR_USER_KEY
 from models import  db, User, Recording, Playlist, Tag
 
-os.environ['DATABASE_URL'] = "postgresql:///musophile_test"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///musophile_test"
+app.config['SQLALCHEMY_ECHO'] = False
 
 db.create_all()
 
@@ -35,9 +36,7 @@ class UserViewTestCase(TestCase):
             mbid = '12345',
             title = 'F.U.N.',
             artist = 'Spongebob Squarepants',
-            release = 'Spongebob Squarepants',
-            duration = 78,
-            isrcs = []
+            release = 'Spongebob Squarepants'
         )
         db.session.add_all([self.u, self.r])
         db.session.commit()
@@ -60,12 +59,7 @@ class UserViewTestCase(TestCase):
         db.session.commit()
 
         p.recordings.append(self.r)
-        t = Tag.query.get(1)
-        if t:
-            p.tags.append(t)
         db.session.commit()
-
-        return Playlist.query.get(1)
     
     def setup_tag(self):
         t = Tag(name = 'peanut butter jelly time!')
@@ -73,18 +67,13 @@ class UserViewTestCase(TestCase):
         db.session.commit()
         
         self.r.tags.append(t)
-        p = Playlist.query.get(1)
-        if p:
-            p.tags.append(t)
         db.session.commit()
-
-        return Tag.query.get(1)
 
     # Playlist tests
 
     def test_show_user_playlists(self):
         """Do the user's playlists display?"""
-        p = self.setup_playlist()
+        self.setup_playlist()
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.u.id
@@ -96,9 +85,8 @@ class UserViewTestCase(TestCase):
 
     def test_show_playlist(self):
         """Does it show a specific playlist?"""
-        p = self.setup_playlist()
-        # import pdb; pdb.set_trace()
-        t = self.setup_tag()
+        self.setup_playlist()
+        self.setup_tag()
         p = Playlist.query.get(1)
         with self.client as c:
             with c.session_transaction() as sess:
@@ -125,15 +113,13 @@ class UserViewTestCase(TestCase):
             self.assertIn('Krabby Patty music', html)
 
     def test_add_recording_to_playlist(self):
-        """Does it add a recording to a new playlist?"""
-        p = self.setup_playlist()
+        """Does it add a recording to a playlist?"""
+        self.setup_playlist()
         r = Recording(
             mbid = '437uyn',
             title = 'Clarinet Concerto',
             artist = 'Squidward',
-            release = 'The Artist Also Known As Squidward',
-            duration = 5,
-            isrcs = []
+            release = 'The Artist Also Known As Squidward'
         )
         db.session.add(r)
         db.session.commit()
@@ -154,9 +140,10 @@ class UserViewTestCase(TestCase):
             self.assertIn('Clarinet Concerto', html)
 
     def test_remove_recording_from_playlist(self):
-        """Does it remove a recording to a new playlist?"""
-        p = self.setup_playlist()
+        """Does it remove a recording from a playlist?"""
+        self.setup_playlist()
         r = Recording.query.get(1)
+        p = Playlist.query.get(1)
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.u.id
@@ -164,11 +151,12 @@ class UserViewTestCase(TestCase):
             html = str(resp.data)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('Successfully removed song from Jelly Jamz', html)
+            self.assertIn('Successfully removed recording from Jelly Jamz', html)
 
     def test_edit_playlist(self):
         """Does it edit a playlist?"""
-        p = self.setup_playlist()
+        self.setup_playlist()
+        p = Playlist.query.get(1)
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.u.id
@@ -183,7 +171,8 @@ class UserViewTestCase(TestCase):
 
     def test_delete_playlist(self):
         """Does it delete a playlist?"""
-        p = self.setup_playlist()
+        self.setup_playlist()
+        p = Playlist.query.get(1)
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.u.id
@@ -191,13 +180,14 @@ class UserViewTestCase(TestCase):
             html = str(resp.data)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('Successfully deleted Jelly Jamz', html)
+            self.assertIn('Successfully deleted playlist', html)
 
     # Tag tests
 
     def test_show_tag(self):
         """Does it show a specific tag and its recordings?"""
-        t = self.setup_tag()
+        self.setup_tag()
+        t = Tag.query.get(1)
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.u.id
@@ -210,7 +200,8 @@ class UserViewTestCase(TestCase):
     
     def remove_tag(self):
         """Does it remove a tag from a recording"""
-        t = self.setup_tag()
+        self.setup_tag()
+        t = Tag.query.get(1)
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.u.id
@@ -218,5 +209,5 @@ class UserViewTestCase(TestCase):
             html = str(resp.data)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('Successfully removed peanut butter jelly time! tag', html)
+            self.assertIn('Successfully removed peanut butter jelly time! tag from F.U.N.', html)
             self.assertIn('F.U.N.', html)

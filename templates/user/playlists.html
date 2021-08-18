@@ -2,6 +2,9 @@
 {% block title %}{{user.username}}'s Playlists{% endblock %}
 {% block content %}
 <h1>{{user.username}}'s Playlists</h1>
+{% if user.playlists|length < 1 %}
+<strong>This user did not make any playlists yet...</strong>
+{% else %}
 {% for playlist in user.playlists %}
 <div class="playlist">
     <h4 class='playlist-name'>{{playlist.name}}</h4>
@@ -14,4 +17,5 @@
     <a href="/playlists/{{playlist.id}}">See full playlist</a>
 </div>
 {% endfor %}
+{% endif %}
 {% endblock %}

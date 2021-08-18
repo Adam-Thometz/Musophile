@@ -3,15 +3,17 @@ from functools import wraps
 from flask_debugtoolbar import DebugToolbarExtension
 import musicbrainzngs as mb
 import _startup
-import _flask_spotify_auth
+from _flask_spotify_auth import refreshAuth
 
 from models import db, connect_db, User, Playlist, Recording, Tag
 from forms import RegisterForm, LoginForm, EditRecordingForm, PlaylistForm, AddToPlaylistForm
-from helpers import create_tag, get_recording_info, get_spotify_info
+from helpers import create_tag, get_recording_info, get_spotify_info, get_refresh_token
 from sqlalchemy.exc import IntegrityError
 
 CURR_USER_KEY = 'curr_user'
 ACCESS_TOKEN = 'access_token'
+
+TOKEN = ''
 
 app = Flask(__name__)
 
@@ -36,7 +38,6 @@ mb.set_format(fmt='json')
 @app.before_request
 def add_user_to_g():
     """Add logged-in user to Flask global to easily get user info"""
-
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
     else:
@@ -63,7 +64,6 @@ def do_login(user):
 @app.route('/')
 def home_page():
     """Landing page"""
-    session.pop(ACCESS_TOKEN)
     return render_template('home.html')
 
 @app.errorhandler(404)
@@ -83,6 +83,16 @@ def start_auth():
 @app.route('/callback/')
 def auth_spotify():
     _startup.getUserToken(request.args['code'])
+    return redirect('/search')
+
+@app.route('/reauth')
+def reauthorize_spotify():
+    refresh_token = session[ACCESS_TOKEN][4]
+    token = refreshAuth(refresh_token)
+    token['refresh_token'] = refresh_token
+    session[ACCESS_TOKEN] = token
+
+    flash('Sorry! We had to reauthenticate your access to Spotify for security reasons. Try searching again!', 'primary')
     return redirect('/search')
 
 ###########
@@ -152,6 +162,7 @@ def search_page():
     if token and (ACCESS_TOKEN not in session):
         session[ACCESS_TOKEN] = token
     
+
     return render_template('search.html')
 
 @app.route('/search/api/<title>/<artist>')
@@ -159,12 +170,8 @@ def search_page():
 def get_info(title, artist):
     spotify_info = get_spotify_info(title, artist, session[ACCESS_TOKEN][0])
     if 'error' in spotify_info:
-        if spotify_info['error'] == 401:
-            token = _flask_spotify_auth.refreshAuth()
-            session[ACCESS_TOKEN] = token
-                
-            flash('Something went wrong with your search but we fixed it! Try again', 'info')
-            return redirect('/search')
+        if spotify_info['error']['status'] == 401:
+            return redirect('/reauth')
     return spotify_info
 
 @app.route('/user/<int:user_id>')
@@ -189,6 +196,7 @@ def show_user_library(user_id):
 @login_required
 def add_recording_to_library(recording_id, spotify_uri):
     """Add a recording to user's library"""
+    
     recording_data = get_recording_info(recording_id)
 
     recording = Recording(
@@ -314,7 +322,6 @@ def remove_recording_from_playlist(playlist_id, recording_id):
     """Remove recording from playlist"""
     playlist = Playlist.query.get_or_404(playlist_id)
     recording = Recording.query.get_or_404(recording_id)
-    # import pdb; pdb.set_trace()
     playlist.recordings.remove(recording)
     db.session.commit()
     flash(f'Successfully removed recording from {playlist.name}', 'success')

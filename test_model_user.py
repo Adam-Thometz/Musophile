@@ -1,7 +1,7 @@
 """User model tests"""
 
-# run tests by typing in terminal:
-#    python -m unittest test_model_user.py
+# run tests by typing in the terminal:
+# python -m unittest test_model_user.py
 
 import os
 from unittest import TestCase
@@ -10,7 +10,8 @@ from sqlalchemy.exc import IntegrityError
 from app import app
 from models import db, User, Recording, Playlist, DEFAULT_IMG_URL
 
-os.environ['DATABASE_URL'] = "postgresql:///musophile_test"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///musophile_test"
+app.config['SQLALCHEMY_ECHO'] = False
 
 
 db.create_all()

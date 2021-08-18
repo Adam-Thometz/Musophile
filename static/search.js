@@ -71,7 +71,7 @@ async function generateResponseHTML(result) {
 async function getSpotifyURIAndHTML(title, artist, id) {
     console.dir('getSpotifyURIAndHTML')
     resp = await axios.get(`${SEARCH_URL}/${title}/${artist}`)
-    
+
     if (resp.data['tracks']['items'].length > 0){
         uri = resp.data['tracks']['items'][0]['uri'].slice(14)
         return `<div class="player">
@@ -79,7 +79,7 @@ async function getSpotifyURIAndHTML(title, artist, id) {
             </div>
             <aside class="search-result-options">
                 <form action="/user/add-recording/${id}/${uri}" method="POST">
-                    <button class='add-song btn btn-sm btn-outline-primary'>Add to library</button>
+                    <button class='add-song btn btn-sm btn-outline-dark'>Add to library</button>
                 </form>
             </aside>
         </div>`
@@ -89,7 +89,7 @@ async function getSpotifyURIAndHTML(title, artist, id) {
     </div>
     <aside class="search-result-options">
                 <form action="/user/add-recording/${id}/0" method="POST">
-                    <button class='add-song btn btn-sm btn-outline-primary'>Add to library</button>
+                    <button class='add-song btn btn-sm btn-outline-dark'>Add to library</button>
                 </form>
             </aside>
         </div>`
