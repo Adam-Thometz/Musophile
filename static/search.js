@@ -75,7 +75,7 @@ async function getSpotifyURIAndHTML(title, artist, id) {
     if (resp.data['tracks']['items'].length > 0){
         uri = resp.data['tracks']['items'][0]['uri'].slice(14)
         return `<div class="player">
-                <iframe src="https://open.spotify.com/embed/track/${uri}" width="100%" height="80" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+        <iframe src="https://open.spotify.com/embed/track/${uri}" width="100%" height="80" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
             </div>
             <aside class="search-result-options">
                 <form action="/user/add-recording/${id}/${uri}" method="POST">

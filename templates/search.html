@@ -6,7 +6,7 @@
 {% if 'access_token' in session %}
 <span id="hasToken" class="token-indicator has-token">You're connected! You may search and hear tracks!</span>
 {% else %}
-<a href="/auth" id="hasToken" class="token-indicator">You must connect to Spotify. Click here to do so!</a>
+<a href="/auth" id="hasToken" class="token-indicator">Connect to Spotify before searching to get tracks</a>
 {% endif %}
 <div id="searchWrapper">
     <div class="search-type">

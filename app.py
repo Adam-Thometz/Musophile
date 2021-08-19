@@ -64,6 +64,7 @@ def do_login(user):
 @app.route('/')
 def home_page():
     """Landing page"""
+    # session.pop(ACCESS_TOKEN)
     return render_template('home.html')
 
 @app.errorhandler(404)
@@ -87,12 +88,12 @@ def auth_spotify():
 
 @app.route('/reauth')
 def reauthorize_spotify():
-    refresh_token = session[ACCESS_TOKEN][4]
-    token = refreshAuth(refresh_token)
+    refresh_token = session[ACCESS_TOKEN][3]
+    token = get_refresh_token(refresh_token)
     token['refresh_token'] = refresh_token
     session[ACCESS_TOKEN] = token
 
-    flash('Sorry! We had to reauthenticate your access to Spotify for security reasons. Try searching again!', 'primary')
+    flash("Sorry! We had to reauthenticate Musophile's access to Spotify for security reasons. Try searching again!", 'primary')
     return redirect('/search')
 
 ###########
@@ -161,8 +162,6 @@ def search_page():
     token = _startup.getAccessToken()
     if token and (ACCESS_TOKEN not in session):
         session[ACCESS_TOKEN] = token
-    
-
     return render_template('search.html')
 
 @app.route('/search/api/<title>/<artist>')
@@ -179,7 +178,6 @@ def get_info(title, artist):
 def user_page(user_id):
     """User page"""
     user = User.query.get_or_404(user_id)
-    
     return render_template('user/user.html', user=user)
 
 ###########
@@ -227,13 +225,11 @@ def edit_recording(user_id, recording_id):
     """Edit the information on a recording"""
     recording = Recording.query.get_or_404(recording_id)
     form = EditRecordingForm()
-    
     if form.validate_on_submit():
         recording.comments = form.comments.data
         for tag in form.tags.data.split(', '):
             if tag not in [tag.name for tag in recording.tags]:
                 create_tag(tag, recording)
-        
         db.session.commit()
         flash(f'Successfully updated {recording.title} in your library!', 'success')
         return redirect(f'/user/{user_id}/library')

@@ -38,13 +38,14 @@ def getToken(code, client_id, client_secret, redirect_uri):
 def handleToken(response):
     auth_head = {"Authorization": "Bearer {}".format(response["access_token"])}
     REFRESH_TOKEN = response["refresh_token"]
-    return [response["access_token"], auth_head, response["scope"], response["expires_in"], REFRESH_TOKEN]
+    return [response["access_token"], auth_head, response["expires_in"], REFRESH_TOKEN]
 
 def refreshAuth(refresh_token):
     body = {
         "grant_type" : "refresh_token",
         "refresh_token" : refresh_token
     }
+    
     post_refresh = requests.post(SPOTIFY_URL_TOKEN, data=body, headers=HEADER)
     p_back = json.dumps(post_refresh.text)
     

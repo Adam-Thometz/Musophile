@@ -16,7 +16,7 @@ PORT = "5000"
 CALLBACK_URL = "http://localhost"
 
 #Add needed scope from spotify user
-SCOPE = "streaming"
+SCOPE = "user-read-private user-read-playback-state user-read-playback-position user-modify-playback-state user-read-email user-read-currently-playing"
 #token_data will hold authentication header with access code, the allowed scopes, and the refresh countdown 
 TOKEN_DATA = []
 
