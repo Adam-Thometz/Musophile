@@ -1,4 +1,4 @@
-# Credit for the code in this file:
+# Credit for the code (excluding deployment-related items) in this file:
 ##################
 # Author: Greg VanOrt
 # Title: Flask-Spotify-Auth
