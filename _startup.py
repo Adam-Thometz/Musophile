@@ -8,16 +8,17 @@
 # Access Date: 13 Aug, 2021
 ##################
 
+from secret_codes import CLIENT_SECRET
 from _flask_spotify_auth import getAuth, getToken
-from secret_codes import CLIENT_ID, CLIENT_SECRET
+from boto.s3.connection import S3Connection
+import os
+# from secret_codes import CLIENT_ID, CLIENT_SECRET
 
-#Port and callback url can be changed or left to localhost:5000
 PORT = "5000"
 CALLBACK_URL = "https://musophile.herokuapp.com"
-
-#Add needed scope from spotify user
+CLIENT_ID = S3Connection(os.environ['CLIENT_ID'])
+CLIENT_SECRET = S3Connection(os.environ['CLIENT_SECRET'])
 SCOPE = "user-read-private user-read-playback-state user-read-playback-position user-modify-playback-state user-read-email user-read-currently-playing"
-#token_data will hold authentication header with access code, the allowed scopes, and the refresh countdown 
 TOKEN_DATA = []
 
 def getUser():
