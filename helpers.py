@@ -51,20 +51,20 @@ def get_refresh_token(refresh_token):
     data = {
         "grant_type" : "refresh_token",
         "refresh_token" : refresh_token,
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET
     }
-    to_encode = f'{CLIENT_ID}:{CLIENT_SECRET}'.encode()
-    encoded = base64.b64encode(to_encode)
+    # to_encode = f'{CLIENT_ID}:{CLIENT_SECRET}'.encode()
+    # encoded = base64.b64encode(to_encode)
     headers = {
-        # 'Authorization': f'Basic {encoded}',
+        # 'Authorization': f'Bearer {encoded}',
         'Content-Type': 'application/x-www-form-urlencoded'
     }
-    import pdb; pdb.set_trace()
     resp = requests.post(f'{SPOTIFY_REFRESH_URL}', data=data, headers=headers)
     json = resp.json()
     new_token_data = [
         json['access_token'],
-        {'Authorization': f"Basic {json['access_token']}"},
-        json['scope'],
+        {'Authorization': f"Bearer {json['access_token']}"},
         json['expires_in'],
         refresh_token
     ]

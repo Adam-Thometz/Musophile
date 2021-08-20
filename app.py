@@ -3,7 +3,7 @@ from functools import wraps
 from flask_debugtoolbar import DebugToolbarExtension
 import musicbrainzngs as mb
 import _startup
-from _flask_spotify_auth import refreshAuth
+import os
 
 from models import db, connect_db, User, Playlist, Recording, Tag
 from forms import RegisterForm, LoginForm, EditRecordingForm, PlaylistForm, AddToPlaylistForm
@@ -17,10 +17,13 @@ TOKEN = ''
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///musophile'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///musophile')
+if app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgres://'):
+	app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace('postgres://', 'postgresql://', 1)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = "their-dogs-were-astronauts"
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'kepler-victoria')
+
 
 # Set to false to stop debugger from intercepting redirects
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
@@ -64,7 +67,6 @@ def do_login(user):
 @app.route('/')
 def home_page():
     """Landing page"""
-    # session.pop(ACCESS_TOKEN)
     return render_template('home.html')
 
 @app.errorhandler(404)
@@ -90,11 +92,10 @@ def auth_spotify():
 def reauthorize_spotify():
     refresh_token = session[ACCESS_TOKEN][3]
     token = get_refresh_token(refresh_token)
-    token['refresh_token'] = refresh_token
+    token.append(refresh_token)
     session[ACCESS_TOKEN] = token
 
-    flash("Sorry! We had to reauthenticate Musophile's access to Spotify for security reasons. Try searching again!", 'primary')
-    return redirect('/search')
+    return {'reauth': True}
 
 ###########
 # Basic user routes (login/registration/search)
@@ -168,9 +169,12 @@ def search_page():
 @login_required
 def get_info(title, artist):
     spotify_info = get_spotify_info(title, artist, session[ACCESS_TOKEN][0])
+
     if 'error' in spotify_info:
         if spotify_info['error']['status'] == 401:
-            return redirect('/reauth')
+            reauth = redirect('/reauth')
+            return reauth
+
     return spotify_info
 
 @app.route('/user/<int:user_id>')
@@ -241,7 +245,6 @@ def edit_recording(user_id, recording_id):
 def delete_recording(recording_id, user_id):
     """Remove a recording from a user's library"""
     recording = Recording.query.get_or_404(recording_id)
-    user = User.query.get_or_404(user_id)
 
     db.session.delete(recording)
     db.session.commit()

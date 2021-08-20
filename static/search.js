@@ -72,6 +72,10 @@ async function getSpotifyURIAndHTML(title, artist, id) {
     console.dir('getSpotifyURIAndHTML')
     resp = await axios.get(`${SEARCH_URL}/${title}/${artist}`)
 
+    if (resp.data['reauth']) {
+        resp = await axios.get(`${SEARCH_URL}/${title}/${artist}`)
+    }
+    
     if (resp.data['tracks']['items'].length > 0){
         uri = resp.data['tracks']['items'][0]['uri'].slice(14)
         return `<div class="player">
