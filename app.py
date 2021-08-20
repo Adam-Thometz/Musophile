@@ -33,8 +33,6 @@ debug = DebugToolbarExtension(app)
 mb.set_useragent('Musophile', '0.1')
 mb.set_format(fmt='json')
 
-db.create_all()
-
 ###########
 # Route helpers
 ###########
