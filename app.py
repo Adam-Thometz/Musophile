@@ -1,9 +1,8 @@
 from flask import Flask, redirect, render_template, flash, g, session, request
 from functools import wraps
 from flask_debugtoolbar import DebugToolbarExtension
+import _startup, os
 import musicbrainzngs as mb
-import _startup
-import os
 
 from models import db, connect_db, User, Playlist, Recording, Tag
 from forms import RegisterForm, LoginForm, EditRecordingForm, PlaylistForm, AddToPlaylistForm

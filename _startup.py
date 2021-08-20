@@ -9,14 +9,13 @@
 ##################
 
 from _flask_spotify_auth import getAuth, getToken
-from boto.s3.connection import S3Connection
 import os
 # from secret_codes import CLIENT_ID, CLIENT_SECRET
 
 PORT = "5000"
 CALLBACK_URL = "https://musophile.herokuapp.com"
-CLIENT_ID = S3Connection(os.environ['CLIENT_ID'])
-CLIENT_SECRET = S3Connection(os.environ['CLIENT_SECRET'])
+CLIENT_ID = os.environ['CLIENT_ID']
+CLIENT_SECRET = os.environ['CLIENT_SECRET']
 SCOPE = "user-read-private user-read-playback-state user-read-playback-position user-modify-playback-state user-read-email user-read-currently-playing"
 TOKEN_DATA = []
 

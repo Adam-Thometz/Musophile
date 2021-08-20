@@ -1,4 +1,4 @@
-import requests, base64
+import requests
 import musicbrainzngs as mb
 
 from models import db, Tag
