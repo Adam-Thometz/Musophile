@@ -8,7 +8,6 @@
 # Access Date: 13 Aug, 2021
 ##################
 
-from secret_codes import CLIENT_SECRET
 from _flask_spotify_auth import getAuth, getToken
 from boto.s3.connection import S3Connection
 import os

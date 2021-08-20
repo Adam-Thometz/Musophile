@@ -2,7 +2,7 @@ import requests, base64
 import musicbrainzngs as mb
 
 from models import db, Tag
-from secret_codes import CLIENT_ID, CLIENT_SECRET
+from _startup import CLIENT_ID, CLIENT_SECRET
 
 SPOTIFY_API_SEARCH = 'https://api.spotify.com/v1/search/'
 SPOTIFY_REFRESH_URL = 'https://accounts.spotify.com/api/token/'
