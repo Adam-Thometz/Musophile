@@ -48,8 +48,9 @@ Then run the server by typing `flask run`
 1. Go to the Spotify for Developers website (make an account if you haven't already). Go to the Dashboard and create the app (call it Musophile and describe it however you want).
 2. Go to Edit settings, update the website to `http://localhost:5000/`, and set the redirect URI to `http://localhost:5000/callback/`.
 3. Create a file `secret_codes.py` and define the `CLIENT_ID` and `CLIENT_SECRET` variables according to the client id and client secret strings found in your Spotify dashboard.
-4. Go into `_startup.py`, comment out the `CLIENT_ID` and `CLIENT_SECRET` variables (lines 16 and 17), and uncomment the import command (line 14).
-5. Go into `search.js`, comment out line 18 and uncomment the `SEARCH_URL` variable on line 16.
+    - DON'T FORGET TO ADD THIS FILE TO YOUR `.gitignore` FILE
+5. Go into `_startup.py`, comment out the `CLIENT_ID` and `CLIENT_SECRET` variables (lines 16 and 17), and uncomment the import command (line 14).
+6. Go into `search.js`, comment out line 18 and uncomment the `SEARCH_URL` variable on line 16.
 
 ### Possible features to add:
 - **Searching Musophile by tag**: Instead of clicking on tags, users can search by tag in the Musophile database instead of clicking on tags of recordings that the user happens to find while browsing the site.
