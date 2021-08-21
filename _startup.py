@@ -10,11 +10,17 @@
 
 from _flask_spotify_auth import getAuth, getToken
 import os
-# from secret_codes import CLIENT_ID, CLIENT_SECRET
+# uncomment this when working on app locally
+from secret_codes import CLIENT_ID, CLIENT_SECRET
 
-CALLBACK_URL = "https://musophile.herokuapp.com"
-CLIENT_ID = os.environ['CLIENT_ID']
-CLIENT_SECRET = os.environ['CLIENT_SECRET']
+# uncomment CLIENT_ID and CLIENT_SECRET when deploying
+# CLIENT_ID = os.environ['CLIENT_ID']
+# CLIENT_SECRET = os.environ['CLIENT_SECRET']
+
+# Callback for locallost
+CALLBACK_URL =  "http://localhost:5000"
+# Callback for deployment
+# CALLBACK_URL = "https://musophile.herokuapp.com"
 SCOPE = "user-read-private user-read-playback-state user-read-playback-position user-modify-playback-state user-read-email user-read-currently-playing"
 TOKEN_DATA = []
 
@@ -23,7 +29,7 @@ def getUser():
 
 def getUserToken(code):
     global TOKEN_DATA
-    TOKEN_DATA = getToken(code, CLIENT_ID, CLIENT_SECRET, "{}:{}/callback/".format(CALLBACK_URL))
+    TOKEN_DATA = getToken(code, CLIENT_ID, CLIENT_SECRET, "{}/callback/".format(CALLBACK_URL))
 
 # This function, along with the refreshAuth function in _flask_spotify_auth, was rewritten into get_refresh_auth in the helper file
 
