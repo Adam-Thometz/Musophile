@@ -2,7 +2,7 @@
 
 ###### Developer: Adam Thometz
 
-Link to Musophile:
+[Link to Musophile](https://musophile.herokuapp.com/) 
 
 Description: A website where users can create playlists of Spotify songs. The tags that come with each recording are used to classify both recordings and playlists and users can find new songs by following the tags. Musophile is designed for music connoisseurs and people who work in music, such as musicians, DJs, academics, music teachers, etc.
 
@@ -31,6 +31,7 @@ Description: A website where users can create playlists of Spotify songs. The ta
 - Front-end: HTML, CSS, JS, jQuery, Axios, Bootstrap
 - Backend: Python, Flask, WTForms, musicbrainzngs, requests, Bcrypt
 - Database: SQLAlchemy
+- Deployment: Heroku
 
 To access required tools, run the following in terminal:
 
@@ -42,6 +43,14 @@ To access required tools, run the following in terminal:
 
 
 Then run the server by typing `flask run`
+
+### NOTE:
+- **The code in this repo is written specifically for deployment purposes.** In order to interact with the code locally on your machine, do the following:
+    1. Go into `search.js` and switch the `SEARCH_URL` variable to the local variable (line 16). Don't forget to comment out line 18!
+    2. Go into `_startup.py`, comment out the `CLIENT_ID` and `CLIENT_SECRET` variables (lines 16 and 17), and uncomment the import command (line 14) 
+    3. Go to the Spotify for Developers website (make an account if you haven't already). Go to the Dashboard and create the app (call it Musophile and describe it however you want)
+    4. Go to Edit settings, update the website to `http://localhost:5000/`, and set the redirect URI to `http://localhost:5000/callback/`
+    5. Create a file `secret_codes.py` and define the `CLIENT_ID` and `CLIENT_SECRET` variables according to the client id and client secret strings found in your Spotify dashboard.
 
 ### Possible features to add:
 - **Searching Musophile by tag**: Instead of clicking on tags, users can search by tag in the Musophile database instead of clicking on tags of recordings that the user happens to find while browsing the site.
