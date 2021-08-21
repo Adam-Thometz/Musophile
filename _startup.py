@@ -10,17 +10,16 @@
 
 from _flask_spotify_auth import getAuth, getToken
 import os
-# uncomment this when working on app locally
-from secret_codes import CLIENT_ID, CLIENT_SECRET
+#### uncomment this when working on app locally ####
+# from secret_codes import CLIENT_ID, CLIENT_SECRET
+#### uncomment CLIENT_ID and CLIENT_SECRET when deploying ####
+CLIENT_ID = os.environ['CLIENT_ID']
+CLIENT_SECRET = os.environ['CLIENT_SECRET']
 
-# uncomment CLIENT_ID and CLIENT_SECRET when deploying
-# CLIENT_ID = os.environ['CLIENT_ID']
-# CLIENT_SECRET = os.environ['CLIENT_SECRET']
-
-# Callback for locallost
-CALLBACK_URL =  "http://localhost:5000"
-# Callback for deployment
-# CALLBACK_URL = "https://musophile.herokuapp.com"
+# uncomment when working on locallost
+# CALLBACK_URL =  "http://localhost:5000"
+# uncomment when deploying
+CALLBACK_URL = "https://musophile.herokuapp.com"
 SCOPE = "user-read-private user-read-playback-state user-read-playback-position user-modify-playback-state user-read-email user-read-currently-playing"
 TOKEN_DATA = []
 
