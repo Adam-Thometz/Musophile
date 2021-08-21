@@ -18,7 +18,7 @@ const $hasToken = $('#hasToken')
 const SEARCH_URL = 'https://musophile.herokuapp.com/search/api'
 
 const MUSICBRAINZ_API_URL = 'https://musicbrainz.org/ws/2';
-// The MusicBrainz API returns a JSON response if you put the following string at the end of the request URL:
+// The MusicBrainz API returns XML by default. Put this in to return JSON:
 const JSON_FMT = 'fmt=json';
 
 async function displayResults() {

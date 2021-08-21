@@ -1,9 +1,8 @@
-"""Recording model tests"""
+"""Misc model tests"""
 
 # run tests by typing in the terminal:
 # python -m unittest test_model_rest.py
 
-import os
 from unittest import TestCase
 
 from app import app

@@ -8,7 +8,7 @@ SPOTIFY_API_SEARCH = 'https://api.spotify.com/v1/search/'
 SPOTIFY_REFRESH_URL = 'https://accounts.spotify.com/api/token/'
 
 def get_recording_info(id):
-    """Helper function to get recording info"""
+    """Helper function to get recording info from MusicBrainz"""
     recording = mb.get_recording_by_id(id, includes=['artists', 'releases', 'tags'])
 
     title = recording['title']
@@ -33,6 +33,7 @@ def get_recording_info(id):
 
 
 def get_spotify_info(title, artist, token):
+    """Helper function to get recording info from Spotify"""
     params = {
         'q': f'{title} {artist}',
         'type': 'track',
@@ -48,16 +49,15 @@ def get_spotify_info(title, artist, token):
 
 
 def get_refresh_token(refresh_token):
+    """Helper function to get refresh token"""
     data = {
         "grant_type" : "refresh_token",
         "refresh_token" : refresh_token,
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET
     }
-    # to_encode = f'{CLIENT_ID}:{CLIENT_SECRET}'.encode()
-    # encoded = base64.b64encode(to_encode)
+
     headers = {
-        # 'Authorization': f'Bearer {encoded}',
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     resp = requests.post(f'{SPOTIFY_REFRESH_URL}', data=data, headers=headers)
@@ -72,6 +72,7 @@ def get_refresh_token(refresh_token):
 
 
 def create_tag(tag, recording):
+    """Function to add a tag to a song. Checks if the tag exists already and creates a new one if it doesn't"""
     try_tag = Tag.query.filter_by(name=tag).one_or_none()
     if try_tag:
         recording.tags.append(try_tag)

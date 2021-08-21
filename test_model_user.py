@@ -3,7 +3,6 @@
 # run tests by typing in the terminal:
 # python -m unittest test_model_user.py
 
-import os
 from unittest import TestCase
 from sqlalchemy.exc import IntegrityError
 

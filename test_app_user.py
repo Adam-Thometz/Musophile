@@ -1,12 +1,11 @@
-"""Message View tests."""
+"""User View tests."""
 
 # run tests by typing in the terminal:
 # python -m unittest test_app_user.py
 
-import os
 from unittest import TestCase
 
-from app import ACCESS_TOKEN, app, CURR_USER_KEY
+from app import app, CURR_USER_KEY
 from models import  db, User, Recording
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///musophile_test"

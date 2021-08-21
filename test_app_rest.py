@@ -1,9 +1,8 @@
-"""Message View tests."""
+"""Misc View tests."""
 
 # run tests by typing in the terminal:
 # python -m unittest test_app_rest.py
 
-import os
 from unittest import TestCase
 
 from app import app, CURR_USER_KEY
