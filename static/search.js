@@ -12,8 +12,12 @@ const $addSong = $('.add-song')
 
 const $hasToken = $('#hasToken')
 
+// use this verson of SEARCH_URL when working locally
+// const SEARCH_URL = 'http://localhost:5000/search/api'
+// use this verson of SEARCH_URL when deploying
+const SEARCH_URL = 'https://musophile.herokuapp.com/search/api'
+
 const MUSICBRAINZ_API_URL = 'https://musicbrainz.org/ws/2';
-const SEARCH_URL = 'http://localhost:5000/search/api'
 // The MusicBrainz API returns a JSON response if you put the following string at the end of the request URL:
 const JSON_FMT = 'fmt=json';
 
